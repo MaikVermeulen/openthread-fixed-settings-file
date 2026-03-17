@@ -42,4 +42,11 @@
  */
 bool IsSystemDryRun(void);
 
+/*
+ * Returns the fixed settings file base name, if configured.
+ *
+ * @returns  The fixed settings file base name, or nullptr if not set.
+ */
+const char *GetSettingsFileBaseName(void);
+
 #endif // OT_POSIX_PLATFORM_SYSTEM_HPP_

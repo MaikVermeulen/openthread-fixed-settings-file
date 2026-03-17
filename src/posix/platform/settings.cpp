@@ -83,13 +83,23 @@ exit:
 static otError settingsFileInit(otInstance *aInstance)
 {
     char        fileBaseName[ot::Posix::SettingsFile::kMaxFileBaseNameSize];
-    const char *offset = getenv("PORT_OFFSET");
-    uint64_t    nodeId;
+    const char *settingsFile = GetSettingsFileBaseName();
 
-    otPlatRadioGetIeeeEui64(aInstance, reinterpret_cast<uint8_t *>(&nodeId));
-    nodeId = ot::BigEndian::HostSwap64(nodeId);
+    if (settingsFile != nullptr)
+    {
+        snprintf(fileBaseName, sizeof(fileBaseName), "%s", settingsFile);
+    }
+    else
+    {
+        const char *offset = getenv("PORT_OFFSET");
+        uint64_t    nodeId;
 
-    snprintf(fileBaseName, sizeof(fileBaseName), "%s_%" PRIx64, offset == nullptr ? "0" : offset, nodeId);
+        otPlatRadioGetIeeeEui64(aInstance, reinterpret_cast<uint8_t *>(&nodeId));
+        nodeId = ot::BigEndian::HostSwap64(nodeId);
+
+        snprintf(fileBaseName, sizeof(fileBaseName), "%s_%" PRIx64, offset == nullptr ? "0" : offset, nodeId);
+    }
+
     VerifyOrDie(strlen(fileBaseName) < ot::Posix::SettingsFile::kMaxFileBaseNameSize, OT_EXIT_FAILURE);
 
     return sSettingsFile.Init(fileBaseName);
@@ -269,6 +279,7 @@ void otPlatRadioGetIeeeEui64(otInstance *aInstance, uint8_t *aIeeeEui64)
 
 // Stub implementation for testing
 bool IsSystemDryRun(void) { return false; }
+const char *GetSettingsFileBaseName(void) { return nullptr; }
 
 int main()
 {

@@ -61,8 +61,9 @@
 #include "posix/platform/spinel_driver_getter.hpp"
 #include "posix/platform/udp.hpp"
 
-otInstance *gInstance = nullptr;
-bool        gDryRun   = false;
+otInstance *gInstance          = nullptr;
+bool        gDryRun            = false;
+const char *gSettingsFile      = nullptr;
 
 CoprocessorType sCoprocessorType = OT_COPROCESSOR_UNKNOWN;
 
@@ -275,7 +276,8 @@ otInstance *otSysInit(otPlatformConfig *aPlatformConfig)
 
     platformInit(aPlatformConfig);
 
-    gDryRun = aPlatformConfig->mDryRun;
+    gDryRun      = aPlatformConfig->mDryRun;
+    gSettingsFile = aPlatformConfig->mSettingsFile;
     if (sCoprocessorType == OT_COPROCESSOR_RCP)
     {
         gInstance = otInstanceInitSingle();
@@ -495,6 +497,8 @@ void otSysMainloopProcess(otInstance *aInstance, const otSysMainloopContext *aMa
 }
 
 bool IsSystemDryRun(void) { return gDryRun; }
+
+const char *GetSettingsFileBaseName(void) { return gSettingsFile; }
 
 #if OPENTHREAD_POSIX_CONFIG_DAEMON_ENABLE && OPENTHREAD_POSIX_CONFIG_DAEMON_CLI_ENABLE
 namespace {
